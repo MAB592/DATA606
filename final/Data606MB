@@ -1,0 +1,54 @@
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+devtools::install_github("jbryer/DATA606")
+install.packages(c('openintro','devtools','tidyverse', 'ggplot2',
+                   'psych','reshape2','knitr','markdown','shiny','R.rsp',
+                   'fivethirtyeight'))
+```
+
+```{r cars}
+library (tidyverse)
+library (infer)
+library(ggplot2)
+library(readr)
+library (infer)
+```
+
+```{r cars}
+library (tidyverse)
+library (infer)
+library(ggplot2)
+library(readr)
+library (infer)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+world_salary <- read.csv("https://raw.githubusercontent.com/Kingtilon1/try/main/salary_data.csv")
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+```{r}
+summary(world_salary[, c("median_salary", "average_salary", "lowest_salary", "highest_salary")])
+```
+
+```{r}
+ggplot(world_salary, aes(x = continent_name, y = average_salary)) +
+  geom_boxplot(fill = "lightblue") +
+  labs(title = "Distribution of Average Salary Across Geographical Regions",
+       x = "Geographical Region",
+       y = "Average Salary")+
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+```
+
+```{r}
+ world_salary <- world_salary %>% 
+  mutate(North_America = ifelse(continent_name %in% c("Northern America", "North America"), "yes", "no"))
+head(world_salary)
+```
+
