@@ -1,0 +1,202 @@
+---
+title: "Data 606 Project"
+author: "Mikhail Broomes and Tilon Bobb"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    df_print: paged
+---
+### Introduction
+
+***Research Question***
+
+`How do monthly salaries vary across geographical regions, and is there a significant difference in median salaries between Northern America and other regions?`
+
+This analysis investigates the comparison of median salaries between North America and the rest of the world. The primary objective is to explore whether there is a significant difference in average median salaries, with a focus on Northern America. The analysis aims to contribute valuable insights into regional salary disparities, specifically addressing the hypothesis that Northern America exhibits a higher average median salary than the global average.
+
+### Data
+
+This are the libraries used in this analysis: 
+
+```{r setup}
+
+
+library (infer)
+library(ggplot2)
+library(readr)
+library (infer)
+library (tidyverse)
+```
+
+
+The data source for this project was downloaded on [kaggle](https://www.kaggle.com/datasets/zedataweaver/global-salary-data)
+
+```{r cars}
+world_salary <- read.csv("https://raw.githubusercontent.com/Kingtilon1/try/main/salary_data.csv")
+```
+
+Looking at the first few rows of the dataset.  
+
+```{r pressure}
+head(world_salary)
+```
+
+This snippet provides an overview of the dataset by showing the first few rows, including column names and sample data. Let's examine the dataset's structure to understand the data types and column names:
+```{r}
+str(world_salary)
+```
+
+***Data Tidying***
+
+Now let's check for any missing values to see if any cleaning up is necessary before the analysis
+```{r}
+# Check for missing values in the entire dataset
+missing_values <- is.na(world_salary)
+
+# Summarizing the number of missing values in each column
+col_missing_count <- colSums(missing_values)
+
+# Displaying the columns with missing values
+colnames(world_salary)[col_missing_count > 0]
+```
+As we can see, there are no missing vales from the data set, there is however, an error in the column name for the different regions, which is currently continent_name, but since it includes place like the Caribbean and makes a distinction between northern america and North America, we will replace it with geographical region. Since we know that the salaries are monthly, we can also remove the wage_span column.
+
+```{r}
+colnames(world_salary)[colnames(world_salary) == "continent_name"] <- "geographical_region"
+world_salary <- world_salary %>% select(-wage_span)
+```
+
+Since the dataset is specifying data for the North America and Northern America we will fix this issue by turning them into one category.
+
+```{r}
+world_salary <- world_salary %>%
+  mutate(geographical_region = ifelse(world_salary$geographical_region == "North America", "Northern America", world_salary$geographical_region))
+
+  
+unique(world_salary$geographical_region)
+```
+
+
+
+Looking at the summary statistics for the remaining columns 
+
+```{r}
+summary(world_salary[, c("median_salary", "average_salary", "lowest_salary", "highest_salary")])
+```
+**Based off of this data, the first thing I noticed is that the lowest salary within the data set is $0.261 dollars a month. The average mean of the median_salary column is $1,762 a month which means that the worlds average salary can possibly be around $1,762 a month**
+
+## Exploratory data analysis
+
+
+```{r}
+# Boxplot to visualize median salary distribution
+ggplot(world_salary, aes(x = geographical_region, y = median_salary)) +
+  geom_boxplot() +
+  labs(title = "Boxplot of Median Salary by Geographical Region",
+       x = "Geographical Region",
+       y = "Median Salary") +
+  theme_bw()
+```
+Histogram to visualize the distribution of median salary
+
+```{r}
+ggplot(world_salary, aes(x = median_salary)) +
+  geom_histogram(binwidth = 500) +
+  labs(title = "Histogram of Median Salary",
+       x = "Median Salary",
+       y = "Frequency") +
+  theme_bw()
+```
+
+
+
+## Inference 
+
+Here we will present our Null and Alternative hypothesis:
+
+H0 (Null Hypothesis) - There will be no difference in the average median salary for North America compared to the world's average. 
+
+Ha (Alternative Hypothesis) - I hypothesis that Northern America has a higher average median salary than the rest of the worlds average
+
+
+
+```{r}
+world_salary <- world_salary %>%
+  mutate(Northern_America = ifelse(geographical_region %in% c("Northern America","North America","Central America"), "Yes", "No"))
+```
+
+
+```{r }
+ggplot(world_salary, aes(x=median_salary, y=Northern_America  )) + geom_boxplot() + theme_bw()
+```
+
+
+Using a box plot, Northern America, which represents the U.S and Canada, has the highest median salary, along with the largest variability in salary wages, this makes sense, since the United states and Canada are known for having diverse income distributions.
+
+
+Since we are gonna calculate the mean of the two groups we will then filter them accordingly and I will get rid of some outliers within the dataset. 
+
+
+```{r}
+
+yes_group <- world_salary %>% 
+  filter(Northern_America == "Yes") %>% 
+  filter (median_salary < 5000)
+  
+no_group <- world_salary %>% 
+  filter(Northern_America == "No") %>% 
+  filter (median_salary < 5000)
+```
+
+## Independent Sample T-Test 
+
+Since we want to calculate the average median salaries of between North America and the world and we want to see if there is a significantly higher difference between the means we will conduct an Independent sample t-test to test the means of the two groups.
+
+First before we can conduct our test we have to test our assumptions to see if using a T-test is valid in this case:
+Test for normal distribution 
+
+
+# Creating QQ plot for the group without North America
+```{r}
+qqnorm(no_group$median_salary)
+qqline(no_group$median_salary, col = "red")
+
+```
+
+
+# Creating QQ plot for the group with North America
+```{r}
+
+qqnorm(yes_group$median_salary)
+qqline(yes_group$median_salary, col = "red")
+
+
+```
+
+We can see that they are somewhat normally distributed. We will now conduct a t=test to test our hypothesis  
+
+```{r}
+# Perform t-tests for 'Yes' and 'No' groups
+t_test_yes <- t.test(yes_group$median_salary, var.equal = FALSE)
+t_test_no <- t.test(no_group$median_salary, var.equal = FALSE)
+
+print(t_test_yes)
+print(t_test_no)
+```
+### Conclusion
+
+The p-value associated with the t-test for the group with Northern America is very small **`(p-value = 8.046e-07)`**, indicating strong evidence against the null hypothesis. Based on the t-test results, there is evidence to support the alternative hypothesis. The data suggests that Northern America has a significantly higher average median salary than the rest of the world's average
+
+```{r}
+# Fit ANOVA model
+anova_model <- aov(median_salary ~ Northern_America, data = world_salary)
+
+# Check assumptions and diagnostics (e.g., residuals plot)
+plot(anova_model)
+
+# Perform post hoc tests if ANOVA is significant
+posthoc_tests <- TukeyHSD(anova_model)
+print(posthoc_tests)
+
+```
+
