@@ -26,23 +26,24 @@ library(ggplot2)
 library(readr)
 library (infer)
 library (tidyverse)
+library(car)
 ```
 
 
 The data source for this project was downloaded on [kaggle](https://www.kaggle.com/datasets/zedataweaver/global-salary-data)
 
 ```{r cars}
-config <- yaml::read_yaml("config.yaml")
-con <- dbConnect(
-  RMySQL::MySQL(),
-  dbname = config$dbname,
-  host = config$host,
-  port = config$port,
-  user = config$user,
-  password =  config$password
-)
-query <- "SELECT * FROM project3.salary_data"
-world_salary <- dbGetQuery(con, query)
+  config <- yaml::read_yaml("config.yaml")
+  con <- dbConnect(
+    RMySQL::MySQL(),
+    dbname = config$dbname,
+    host = config$host,
+    port = config$port,
+    user = config$user,
+    password =  config$password
+  )
+  query <- "SELECT * FROM project3.salary_data"
+  world_salary <- dbGetQuery(con, query)
 ```
 
 Looking at the first few rows of the dataset.  
