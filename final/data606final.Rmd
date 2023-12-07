@@ -19,8 +19,8 @@ This analysis investigates the comparison of median salaries between North Ameri
 This are the libraries used in this analysis: 
 
 ```{r setup}
-
-
+library(yaml)
+library(RMySQL)
 library (infer)
 library(ggplot2)
 library(readr)
@@ -32,7 +32,17 @@ library (tidyverse)
 The data source for this project was downloaded on [kaggle](https://www.kaggle.com/datasets/zedataweaver/global-salary-data)
 
 ```{r cars}
-world_salary <- read.csv("https://raw.githubusercontent.com/Kingtilon1/try/main/salary_data.csv")
+config <- yaml::read_yaml("config.yaml")
+con <- dbConnect(
+  RMySQL::MySQL(),
+  dbname = config$dbname,
+  host = config$host,
+  port = config$port,
+  user = config$user,
+  password =  config$password
+)
+query <- "SELECT * FROM project3.salary_data"
+world_salary <- dbGetQuery(con, query)
 ```
 
 Looking at the first few rows of the dataset.  
