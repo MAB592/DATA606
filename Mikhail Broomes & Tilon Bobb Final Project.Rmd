@@ -91,7 +91,7 @@ summary(world_salary[, c("median_salary", "average_salary", "lowest_salary", "hi
 ```{r}
 # Boxplot to visualize median salary distribution
 ggplot(world_salary, aes(x = geographical_region, y = median_salary)) +
-  geom_boxplot() +
+  geom_boxplot(fill = "lightblue") +
   labs(title = "Boxplot of Median Salary by Geographical Region",
        x = "Geographical Region",
        y = "Median Salary") +
