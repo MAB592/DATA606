@@ -173,15 +173,29 @@ qqline(yes_group$median_salary, col = "red")
 
 ```
 
-We can see that they are somewhat normally distributed. We will now conduct a t=test to test our hypothesis  
+# Testting for variance
+
+This is our last condition too see what type of test we need to conduct and I will be using Levene's test for variance  
 
 ```{r}
-# Perform t-tests for 'Yes' and 'No' groups
-t_test_yes <- t.test(yes_group$median_salary, var.equal = FALSE)
-t_test_no <- t.test(no_group$median_salary, var.equal = FALSE)
 
-print(t_test_yes)
-print(t_test_no)
+levene_test_result <- leveneTest(median_salary ~ Northern_America, data = world_salary)
+print(levene_test_result)
+
+```
+Since our p value is greater than 0.05 we can see that the variances are not significantly different from each other ie they have a close variance 
+
+
+We will now conduct a t=test to test our hypothesis  
+
+```{r}
+
+# Perform independent samples t-test assuming equal variances
+t_test_equal_var <- t.test(median_salary ~ Northern_America, data = world_salary, var.equal = TRUE)
+
+# Print the results
+print(t_test_equal_var)
+
 ```
 ### Conclusion
 
