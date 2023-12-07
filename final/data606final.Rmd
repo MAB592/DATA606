@@ -183,7 +183,7 @@ qqline(yes_group$median_salary, col = "red")
 
 ```
 
-# Testting for variance
+# Testing for variance
 
 This is our last condition too see what type of test we need to conduct and I will be using Levene's test for variance  
 
