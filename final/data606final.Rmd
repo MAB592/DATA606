@@ -195,4 +195,4 @@ print(t_test_no)
 ```
 ### Conclusion
 
-The p-value associated with the t-test for the group with Northern America is very small **`(p-value = 8.046e-07)`**, this is less than the significance level of 0.05. This indicates strong evidence against the null hypothesis. Based on the t-test results, there is evidence to support the alternative hypothesis. The data suggests that Northern America has a significantly higher average median salary than the rest of the world's average
+The p-value associated with the t-test for the group with Northern America is small **`(p-value = 0.03204)`**, this is less than the significance level of 0.05. This indicates strong evidence against the null hypothesis. Based on the t-test results, there is evidence to support the alternative hypothesis. The data suggests that Northern America has a significantly higher average median salary than the rest of the world's average
