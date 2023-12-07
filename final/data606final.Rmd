@@ -190,8 +190,8 @@ This is our last condition too see what type of test we need to conduct and I wi
 
 ```{r}
 
-levene_test_result <- leveneTest(median_salary ~ Northern_America, data = world_salary)
-print(levene_test_result)
+var_test_result <- var.test(median_salary ~ Northern_America, data = world_salary)
+print(var_test_result)
 
 ```
 Since our p value is greater than 0.05 we can see that the variances are not significantly different from each other ie they have a close variance 
